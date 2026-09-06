@@ -42,3 +42,58 @@ export async function register(req, res) {
     },
   });
 }
+
+export async function googleAuthCallback(req, res) {
+  const user = req.user;
+
+  const isUserAlreadyExist = await UserModel.findOne({
+    $or: [{ email: user.emails[0].value }, { googleId: user.id }],
+  });
+
+  if (isUserAlreadyExist) {
+    const token = jwt.sign(
+      { id: isUserAlreadyExist._id, role: isUserAlreadyExist.role },
+      config.JWT_SECRET,
+      { expiresIn: "2d" },
+    );
+
+    res.cookie("token", token);
+
+    return res.status(200).json({
+      message: "User logged in successfully",
+      user: {
+        id: isUserAlreadyExist._id,
+        email: isUserAlreadyExist.email,
+        fullname: isUserAlreadyExist.fullname,
+        role: isUserAlreadyExist.role,
+      },
+    });
+  }
+
+  const newUser = await UserModel.create({
+    email: user.emails[0].value,
+    googleId: user.id,
+    fullname: {
+      firstName: user.name.givenName,
+      lastName: user.name.familyName,
+    },
+  });
+
+  const token = jwt.sign(
+    { id: newUser._id, role: newUser.role },
+    config.JWT_SECRET,
+    { expiresIn: "2d" },
+  );
+
+  res.cookie("token", token);
+
+  res.status(201).json({
+    message: "User registered successfully",
+    user: {
+      id: newUser._id,
+      email: newUser.email,
+      fullname: newUser.fullname,
+      role: newUser.role,
+    },
+  });
+}
