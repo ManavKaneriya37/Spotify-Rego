@@ -29,7 +29,13 @@ passport.use(
   ),
 );
 
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
 
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "Welcome to the Auth Service" });
+});
 
 
 app.use("/api/auth", authRoutes);
