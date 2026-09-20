@@ -24,7 +24,7 @@ export async function register(req, res) {
     email,
     password: hash,
     fullname: { firstName, lastName },
-    role
+    role,
   });
 
   const token = jwt.sign(
@@ -63,14 +63,22 @@ export async function googleAuthCallback(req, res) {
 
   if (isUserAlreadyExist) {
     const token = jwt.sign(
-      { id: isUserAlreadyExist._id, role: isUserAlreadyExist.role, fullname: isUserAlreadyExist.fullname },
+      {
+        id: isUserAlreadyExist._id,
+        role: isUserAlreadyExist.role,
+        fullname: isUserAlreadyExist.fullname,
+      },
       config.JWT_SECRET,
       { expiresIn: "2d" },
     );
 
     res.cookie("token", token);
 
-    return res.redirect("http://localhost:5173/")
+    if (isUserAlreadyExist.role === "artist") {
+      res.redirect("http://localhost:5173/artist/dashboard");
+    }
+
+    res.redirect("http://localhost:5173/"); 
   }
 
   const newUser = await UserModel.create({
@@ -80,7 +88,8 @@ export async function googleAuthCallback(req, res) {
       firstName: user.name.givenName,
       lastName: user.name.familyName,
     },
-    role,c
+    role,
+    c,
   });
 
   const token = jwt.sign(
@@ -98,7 +107,7 @@ export async function googleAuthCallback(req, res) {
 
   res.cookie("token", token);
 
-  res.redirect("http://localhost:5173/")
+  res.redirect("http://localhost:5173/");
 }
 
 export async function login(req, res) {

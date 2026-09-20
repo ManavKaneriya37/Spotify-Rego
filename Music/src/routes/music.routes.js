@@ -19,8 +19,39 @@ router.post(
 );
 
 router.get(
+  "/",
+  authMiddleware.authUserMiddleware,
+  MusicController.getAllMusics,
+);
+
+router.get(
   "/artist-musics",
   authMiddleware.authArtistMiddleware,
   MusicController.getArtistMusics,
+);
+
+router.get(
+  "/:id",
+  authMiddleware.authUserMiddleware,
+  MusicController.getMusicById,
+);
+
+router.post(
+  "/playlist",
+  authMiddleware.authArtistMiddleware,
+  MusicController.createPlaylist,
+);
+
+router.get("/playlist", authMiddleware.getArtistMusics, MusicController.getArtistPlaylists)
+router.get(
+  "/playlist",
+  authMiddleware.authUserMiddleware,
+  MusicController.getPlaylists,
+);
+
+router.get(
+  "/playlist/:id",
+  authMiddleware.authUserMiddleware,
+  MusicController.getPlaylistById,
 );
 export default router;
