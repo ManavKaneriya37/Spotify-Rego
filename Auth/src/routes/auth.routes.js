@@ -11,10 +11,13 @@ router.post(
   authController.register,
 );
 
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
-);
+router.get("/google", (req, res, next) => {
+  const role = req.query.role === "artist" ? "artist" : "user";
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    state: role,
+  })(req, res, next);
+});
 
 router.get(
   "/google/callback",

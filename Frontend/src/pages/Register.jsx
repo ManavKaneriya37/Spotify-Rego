@@ -64,10 +64,36 @@ export default function Register() {
 
         {error && <div className="alert-message">{error}</div>}
 
+        <div className="form-field" style={{ marginBottom: '1.25rem' }}>
+          <label className="form-label">I want to register as</label>
+          <div className="radio-group">
+            <label className={`radio-card ${formData.userType === 'User' ? 'active' : ''}`}>
+              <input
+                type="radio"
+                name="userType"
+                value="User"
+                checked={formData.userType === 'User'}
+                onChange={handleChange}
+              />
+              <span>User</span>
+            </label>
+            <label className={`radio-card ${formData.userType === 'Artist' ? 'active' : ''}`}>
+              <input
+                type="radio"
+                name="userType"
+                value="Artist"
+                checked={formData.userType === 'Artist'}
+                onChange={handleChange}
+              />
+              <span>Artist</span>
+            </label>
+          </div>
+        </div>
+
         <button
           type="button"
           className="btn-google"
-          onClick={() => window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google`}
+          onClick={() => window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google?role=${formData.userType.toLowerCase()}`}
         >
           <svg className="google-icon" viewBox="0 0 24 24">
             <path
@@ -95,31 +121,6 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form-body">
-          <div className="form-field">
-            <label className="form-label">I want to register as</label>
-            <div className="radio-group">
-              <label className={`radio-card ${formData.userType === 'User' ? 'active' : ''}`}>
-                <input
-                  type="radio"
-                  name="userType"
-                  value="User"
-                  checked={formData.userType === 'User'}
-                  onChange={handleChange}
-                />
-                <span>User</span>
-              </label>
-              <label className={`radio-card ${formData.userType === 'Artist' ? 'active' : ''}`}>
-                <input
-                  type="radio"
-                  name="userType"
-                  value="Artist"
-                  checked={formData.userType === 'Artist'}
-                  onChange={handleChange}
-                />
-                <span>Artist</span>
-              </label>
-            </div>
-          </div>
 
           <div className="form-field">
             <label htmlFor="username" className="form-label">

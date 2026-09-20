@@ -9,6 +9,7 @@ export async function register(req, res) {
     email,
     password,
     fullname: { firstName, lastName },
+    role = "user",
   } = req.body;
 
   const isUserAlreadyExist = await UserModel.findOne({ email });
@@ -23,10 +24,11 @@ export async function register(req, res) {
     email,
     password: hash,
     fullname: { firstName, lastName },
+    role
   });
 
   const token = jwt.sign(
-    { id: newUser._id, role: newUser.role },
+    { id: newUser._id, role: newUser.role, fullname: newUser.fullname },
     config.JWT_SECRET,
     { expiresIn: "2d" },
   );
@@ -53,6 +55,7 @@ export async function register(req, res) {
 
 export async function googleAuthCallback(req, res) {
   const user = req.user;
+  const role = req.query.state === "artist" ? "artist" : "user";
 
   const isUserAlreadyExist = await UserModel.findOne({
     $or: [{ email: user.emails[0].value }, { googleId: user.id }],
@@ -60,7 +63,7 @@ export async function googleAuthCallback(req, res) {
 
   if (isUserAlreadyExist) {
     const token = jwt.sign(
-      { id: isUserAlreadyExist._id, role: isUserAlreadyExist.role },
+      { id: isUserAlreadyExist._id, role: isUserAlreadyExist.role, fullname: isUserAlreadyExist.fullname },
       config.JWT_SECRET,
       { expiresIn: "2d" },
     );
@@ -77,10 +80,11 @@ export async function googleAuthCallback(req, res) {
       firstName: user.name.givenName,
       lastName: user.name.familyName,
     },
+    role,c
   });
 
   const token = jwt.sign(
-    { id: newUser._id, role: newUser.role },
+    { id: newUser._id, role: newUser.role, fullname: newUser.fullname },
     config.JWT_SECRET,
     { expiresIn: "2d" },
   );
@@ -111,7 +115,7 @@ export async function login(req, res) {
   }
 
   const token = jwt.sign(
-    { id: user._id, role: user.role },
+    { id: user._id, role: user.role, fullname: user.fullname },
     config.JWT_SECRET,
     { expiresIn: "2d" },
   );
