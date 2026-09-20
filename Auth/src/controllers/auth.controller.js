@@ -67,15 +67,7 @@ export async function googleAuthCallback(req, res) {
 
     res.cookie("token", token);
 
-    return res.status(200).json({
-      message: "User logged in successfully",
-      user: {
-        id: isUserAlreadyExist._id,
-        email: isUserAlreadyExist.email,
-        fullname: isUserAlreadyExist.fullname,
-        role: isUserAlreadyExist.role,
-      },
-    });
+    return res.redirect("http://localhost:5173/")
   }
 
   const newUser = await UserModel.create({
@@ -102,13 +94,37 @@ export async function googleAuthCallback(req, res) {
 
   res.cookie("token", token);
 
-  res.status(201).json({
-    message: "User registered successfully",
+  res.redirect("http://localhost:5173/")
+}
+
+export async function login(req, res) {
+  const { email, password } = req.body;
+
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) {
+    return res.status(400).json({ message: "Invalid password" });
+  }
+
+  const token = jwt.sign(
+    { id: user._id, role: user.role },
+    config.JWT_SECRET,
+    { expiresIn: "2d" },
+  );
+
+  res.cookie("token", token);
+
+  res.status(200).json({
+    message: "User logged in successfully",
     user: {
-      id: newUser._id,
-      email: newUser.email,
-      fullname: newUser.fullname,
-      role: newUser.role,
+      id: user._id,
+      email: user.email,
+      fullname: user.fullname,
+      role: user.role,
     },
   });
 }

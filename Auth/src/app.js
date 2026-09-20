@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import cors from "cors";
 const app = express();
 
 // Rotues
@@ -10,6 +11,12 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import config from "./config/config.js";
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,13 +37,12 @@ passport.use(
 );
 
 app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
+  res.status(200).json({ status: "ok" });
 });
 
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "Welcome to the Auth Service" });
+  res.status(200).json({ message: "Welcome to the Auth Service" });
 });
-
 
 app.use("/api/auth", authRoutes);
 
