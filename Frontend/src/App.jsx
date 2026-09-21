@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ArtistDashboard from './pages/ArtistDashboard'
+import UploadMusic from './pages/UploadMusic'
 import NotFound from './pages/NotFound'
 import './styles/app.css'
 
@@ -16,6 +18,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/artist/dashboard" element={<ArtistDashboard />} />
+            <Route path="/artist/upload" element={<UploadMusic />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

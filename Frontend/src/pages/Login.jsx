@@ -23,7 +23,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/login`, {
+      const response = await axios.post(`${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/login`, {
         email: formData.emailOrUsername,
         password: formData.password,
       }, { withCredentials: true })
@@ -52,7 +52,7 @@ export default function Login() {
         <button
           type="button"
           className="btn-google"
-          onClick={() => window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google`}
+          onClick={() => window.location.href = `${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/google`}
         >
           <svg className="google-icon" viewBox="0 0 24 24">
             <path

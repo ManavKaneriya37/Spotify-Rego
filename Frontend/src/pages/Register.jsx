@@ -32,7 +32,7 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/register`, {
+      const response = await axios.post(`${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/register`, {
         email: formData.email,
         fullname: {
           firstName: formData.username.split(' ')[0],
@@ -93,7 +93,7 @@ export default function Register() {
         <button
           type="button"
           className="btn-google"
-          onClick={() => window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/auth/google?role=${formData.userType.toLowerCase()}`}
+          onClick={() => window.location.href = `${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/google?role=${formData.userType.toLowerCase()}`}
         >
           <svg className="google-icon" viewBox="0 0 24 24">
             <path

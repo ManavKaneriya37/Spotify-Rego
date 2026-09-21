@@ -23,6 +23,14 @@ export default function Navbar() {
         >
           Home
         </NavLink>
+        <NavLink
+          to="/artist/dashboard"
+          className={({ isActive }) =>
+            `nav-link-item ${isActive ? 'active' : ''}`
+          }
+        >
+          Dashboard
+        </NavLink>
       </nav>
 
       {/* Action Buttons */}

@@ -42,7 +42,12 @@ router.post(
   MusicController.createPlaylist,
 );
 
-router.get("/playlist", authMiddleware.getArtistMusics, MusicController.getArtistPlaylists)
+router.get(
+  "/playlist/artist",
+  authMiddleware.authArtistMiddleware,
+  MusicController.getArtistPlaylists,
+);
+
 router.get(
   "/playlist",
   authMiddleware.authUserMiddleware,
