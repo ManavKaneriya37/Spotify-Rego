@@ -149,7 +149,7 @@ export async function getArtistPlaylists(req, res) {
 
 export async function getPlaylists(req, res) {
   try {
-    const playlists = await Playlist.find({ artistId: req.user.id });
+    const playlists = await Playlist.find({}).lean();
 
     return res.status(200).json({
       message: "Playlists fetched successfully",

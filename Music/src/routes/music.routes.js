@@ -30,12 +30,6 @@ router.get(
   MusicController.getArtistMusics,
 );
 
-router.get(
-  "/:id",
-  authMiddleware.authUserMiddleware,
-  MusicController.getMusicById,
-);
-
 router.post(
   "/playlist",
   authMiddleware.authArtistMiddleware,
@@ -59,4 +53,11 @@ router.get(
   authMiddleware.authUserMiddleware,
   MusicController.getPlaylistById,
 );
+
+router.get(
+  "/:id",
+  authMiddleware.authUserMiddleware,
+  MusicController.getMusicById,
+);
+
 export default router;

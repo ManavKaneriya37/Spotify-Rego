@@ -95,12 +95,30 @@ export default function ArtistDashboard() {
     fetchPlaylists();
   }, []);
 
+  const getAudioUrl = (song) => {
+    const raw =
+      song?.musicKey ||
+      song?.musicUrl ||
+      song?.audioKey ||
+      song?.audioUrl ||
+      song?.key;
+    if (!raw) return "";
+    return raw.startsWith("http") || raw.startsWith("blob:")
+      ? raw
+      : `${import.meta.env.VITE_MUSIC_SERVER_URL}/${raw.replace(/^\/+/, "")}`;
+  };
+
   const handleTogglePlay = (music) => {
-    if (!music?.musicUrl) return;
-    if (currentPlaying?.musicUrl === music.musicUrl) {
+    const audioUrl = getAudioUrl(music);
+    if (!audioUrl) return;
+
+    if (currentPlaying?.resolvedAudioUrl === audioUrl) {
       setCurrentPlaying(null);
     } else {
-      setCurrentPlaying(music);
+      setCurrentPlaying({
+        ...music,
+        resolvedAudioUrl: audioUrl,
+      });
     }
   };
 
@@ -648,7 +666,7 @@ export default function ArtistDashboard() {
 
           <div className="audio-dock-center">
             <audio
-              src={currentPlaying.musicUrl}
+              src={currentPlaying.resolvedAudioUrl || currentPlaying.musicUrl}
               autoPlay
               controls
               className="audio-dock-element"
