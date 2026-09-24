@@ -78,7 +78,7 @@ export async function googleAuthCallback(req, res) {
       res.redirect("http://localhost:5173/artist/dashboard");
     }
 
-    res.redirect("http://localhost:5173/"); 
+    res.redirect("http://localhost:5173/");
   }
 
   const newUser = await UserModel.create({
@@ -140,4 +140,23 @@ export async function login(req, res) {
       role: user.role,
     },
   });
+}
+
+export async function getCurrentUser(req, res) {
+  try {
+    res.status(200).json({
+      user: req.user,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function logout(req, res) {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 }

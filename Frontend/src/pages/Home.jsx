@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function Home() {
+export default function Home({ socket }) {
   const [musics, setMusics] = useState([]);
   const [playlists, setPlaylists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPlaying, setCurrentPlaying] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -238,7 +240,8 @@ export default function Home() {
               const mId = song._id || song.id || idx;
               const songAudioUrl = getAudioUrl(song);
               const isPlaying =
-                songAudioUrl && currentPlaying?.resolvedAudioUrl === songAudioUrl;
+                songAudioUrl &&
+                currentPlaying?.resolvedAudioUrl === songAudioUrl;
               const coverImg = song.coverImageUrl || song.coverImageKey;
               const releaseDate =
                 song.createdAt || song.releaseDate
@@ -264,7 +267,14 @@ export default function Home() {
                   <div className="track-row-left">
                     <span className="track-number">{idx + 1}</span>
 
-                    <Link to={`/music/${mId}`} title={`Open ${song.title}`}>
+                    <div
+                      onClick={() => {
+                        navigate(`/music/${mId}`);
+                        socket?.emit("play", { musicId: mId });
+                      }}
+                      style={{ cursor: "pointer" }}
+                      title={`Open ${song.title}`}
+                    >
                       {coverImg ? (
                         <img
                           src={coverImg}
@@ -285,18 +295,22 @@ export default function Home() {
                           🎵
                         </div>
                       )}
-                    </Link>
+                    </div>
 
                     <div className="track-details">
-                      <Link
-                        to={`/music/${mId}`}
+                      <div
+                        onClick={() => {
+                          navigate(`/music/${mId}`);
+                          socket?.emit("play", { musicId: mId });
+                        }}
                         style={{
-                          textDecoration: "none",
+                          cursor: "pointer",
                           color: "inherit",
                           transition: "color var(--transition-fast)",
                         }}
                         onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "var(--accent-primary)")
+                          (e.currentTarget.style.color =
+                            "var(--accent-primary)")
                         }
                         onMouseLeave={(e) =>
                           (e.currentTarget.style.color = "inherit")
@@ -304,7 +318,7 @@ export default function Home() {
                         title={`Open ${song.title}`}
                       >
                         <h4>{song.title}</h4>
-                      </Link>
+                      </div>
                       <p>{song.artist || "Unknown Artist"}</p>
                     </div>
                   </div>
@@ -359,8 +373,11 @@ export default function Home() {
             {currentPlaying.coverImageUrl || currentPlaying.coverImageKey ? (
               <img
                 src={
-                  (currentPlaying.coverImageUrl || currentPlaying.coverImageKey).startsWith("http")
-                    ? currentPlaying.coverImageUrl || currentPlaying.coverImageKey
+                  (
+                    currentPlaying.coverImageUrl || currentPlaying.coverImageKey
+                  ).startsWith("http")
+                    ? currentPlaying.coverImageUrl ||
+                      currentPlaying.coverImageKey
                     : `${musicServerUrl}/${(currentPlaying.coverImageUrl || currentPlaying.coverImageKey).replace(/^\/+/, "")}`
                 }
                 alt={currentPlaying.title}

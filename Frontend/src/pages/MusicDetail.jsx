@@ -25,10 +25,9 @@ export default function MusicDetail() {
         import.meta.env.VITE_MUSIC_SERVER_URL || "http://localhost:3002";
 
       try {
-        const response = await axios.get(
-          `${musicServerUrl}/api/music/${id}`,
-          { withCredentials: true }
-        );
+        const response = await axios.get(`${musicServerUrl}/api/music/${id}`, {
+          withCredentials: true,
+        });
 
         const data =
           response.data?.music || response.data?.data || response.data;
@@ -41,7 +40,7 @@ export default function MusicDetail() {
         console.error("Error fetching music:", err);
         setError(
           err.response?.data?.message ||
-            "Unable to load track details. Please make sure you are logged in."
+            "Unable to load track details. Please make sure you are logged in.",
         );
       } finally {
         setLoading(false);
@@ -177,6 +176,7 @@ export default function MusicDetail() {
       <audio
         ref={audioRef}
         src={resolvedAudioUrl || undefined}
+        autoPlay={true}
         preload="metadata"
         loop={isLooping}
         onPlay={() => setIsPlaying(true)}
@@ -195,7 +195,12 @@ export default function MusicDetail() {
       {/* Top Header Navigation */}
       <header className="sp-top-bar">
         <Link to="/" className="sp-back-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           <span>Explore</span>
@@ -214,14 +219,23 @@ export default function MusicDetail() {
         </div>
       ) : error ? (
         <div className="sp-state-box error">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
           <h3>Playback unavailable</h3>
           <p>{error}</p>
-          <Link to="/" className="btn-primary-action" style={{ marginTop: "1rem" }}>
+          <Link
+            to="/"
+            className="btn-primary-action"
+            style={{ marginTop: "1rem" }}
+          >
             Return to catalogue
           </Link>
         </div>
@@ -251,7 +265,9 @@ export default function MusicDetail() {
               <h1 className="sp-song-title">{music.title}</h1>
               <div className="sp-artist-row">
                 <span className="sp-artist-avatar">🎵</span>
-                <span className="sp-artist-name">{music.artist || "Unknown Artist"}</span>
+                <span className="sp-artist-name">
+                  {music.artist || "Unknown Artist"}
+                </span>
                 {music.createdAt && (
                   <>
                     <span className="sp-sep">•</span>
@@ -292,7 +308,9 @@ export default function MusicDetail() {
               {/* Left Mini Info */}
               <div className="sp-dock-meta-left">
                 <span className="sp-meta-title">{music.title}</span>
-                <span className="sp-meta-artist">{music.artist || "Unknown Artist"}</span>
+                <span className="sp-meta-artist">
+                  {music.artist || "Unknown Artist"}
+                </span>
               </div>
 
               {/* Center Controls */}
@@ -304,7 +322,12 @@ export default function MusicDetail() {
                   onClick={toggleLoop}
                   title={isLooping ? "Repeat On" : "Repeat Off"}
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M17 1l4 4-4 4" />
                     <path d="M3 11V9a4 4 0 0 1 4-4h14" />
                     <path d="M7 23l-4-4 4-4" />
@@ -319,7 +342,12 @@ export default function MusicDetail() {
                   onClick={() => skipBackward(10)}
                   title="Rewind 10s"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
                   </svg>
                   <span className="sp-skip-badge">10</span>
@@ -338,7 +366,11 @@ export default function MusicDetail() {
                       <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: "3px" }}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style={{ marginLeft: "3px" }}
+                    >
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   )}
@@ -351,7 +383,12 @@ export default function MusicDetail() {
                   onClick={() => skipForward(10)}
                   title="Forward 10s"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />
                   </svg>
                   <span className="sp-skip-badge">10</span>
@@ -365,7 +402,12 @@ export default function MusicDetail() {
                   title={isMuted ? "Unmute" : "Mute"}
                 >
                   {isMuted || volume === 0 ? (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <line x1="1" y1="1" x2="23" y2="23" />
                       <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6" />
                       <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0a7 7 0 0 1-.11 1.23" />
@@ -373,7 +415,12 @@ export default function MusicDetail() {
                       <line x1="8" y1="23" x2="16" y2="23" />
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                       <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
                     </svg>
@@ -390,13 +437,23 @@ export default function MusicDetail() {
                   title={isMuted ? "Unmute" : "Mute"}
                 >
                   {isMuted || volume === 0 ? (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                       <line x1="23" y1="9" x2="17" y2="15" />
                       <line x1="17" y1="9" x2="23" y2="15" />
                     </svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                       <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
                     </svg>

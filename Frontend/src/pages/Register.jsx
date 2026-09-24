@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
 
 export default function Register() {
+  const { loginUser, validateSession } = useUser()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -13,7 +14,7 @@ export default function Register() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -32,26 +33,46 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/register`, {
-        email: formData.email,
-        fullname: {
-          firstName: formData.username.split(' ')[0],
-          lastName: formData.username.split(' ')[1],
+      const response = await axios.post(
+        `${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/register`,
+        {
+          email: formData.email,
+          fullname: {
+            firstName: formData.username.split(' ')[0],
+            lastName: formData.username.split(' ')[1] || '',
+          },
+          password: formData.password,
+          role: formData.userType.toLowerCase(),
         },
-        password: formData.password,
-        role: formData.userType.toLowerCase(),
-      }, {
-        withCredentials: true
-      });
+        {
+          withCredentials: true,
+        }
+      )
 
-      if (response.status == 201) {
-        navigate('/')
+      if (response.status === 201 || response.status === 200) {
+        let registeredUser = await validateSession()
+        if (!registeredUser) {
+          const rawUser = response.data?.user || response.data
+          if (rawUser && (rawUser.role || rawUser.email || rawUser._id)) {
+            registeredUser = loginUser(rawUser)
+          }
+        }
+
+        const role = (registeredUser?.role || formData.userType).toLowerCase()
+        if (role === 'artist') {
+          navigate('/artist/dashboard')
+        } else {
+          navigate('/')
+        }
       }
-    } catch (error) {
-      console.log(error)
-      setError(error.response.data.message)
+    } catch (err) {
+      console.error(err)
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.msg ||
+          'Registration failed. Please try again.'
+      )
     }
-
   }
 
   return (

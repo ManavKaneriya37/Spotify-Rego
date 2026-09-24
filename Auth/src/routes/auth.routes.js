@@ -1,6 +1,7 @@
 import express from "express";
 import * as authController from "../controllers/auth.controller.js";
 import * as validations from "../middlewares/validation.middleware.js";
+import { authUserMiddleware } from "../middlewares/authUser.middleware.js";
 import passport from "passport";
 
 const router = express.Router();
@@ -25,6 +26,14 @@ router.get(
   authController.googleAuthCallback,
 );
 
-router.post("/login", validations.loginUserValidationRules, authController.login);
+router.post(
+  "/login",
+  validations.loginUserValidationRules,
+  authController.login,
+);
+
+router.get("/me", authUserMiddleware, authController.getCurrentUser);
+
+router.post("/logout", authUserMiddleware, authController.logout);
 
 export default router;

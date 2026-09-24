@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useUser } from '../context/UserContext'
 
 export default function Login() {
+  const { loginUser, validateSession } = useUser()
   const [formData, setFormData] = useState({
     emailOrUsername: '',
     password: '',
     rememberMe: false,
   })
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -18,27 +20,51 @@ export default function Login() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }))
+    if (error) setError('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     try {
-      const response = await axios.post(`${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/login`, {
-        email: formData.emailOrUsername,
-        password: formData.password,
-      }, { withCredentials: true })
+      const response = await axios.post(
+        `${import.meta.env.VITE_AUTH_SERVER_URL}/api/auth/login`,
+        {
+          email: formData.emailOrUsername,
+          password: formData.password,
+        },
+        { withCredentials: true }
+      )
 
-      if (response.status == 200) {
-        // console.log(response.data)
-        navigate('/')
+      if (response.status === 200 || response.status === 201) {
+        // Validate and store the user details via /api/auth/me
+        let loggedInUser = await validateSession()
+        if (!loggedInUser) {
+          loggedInUser = loginUser(response.data?.user || response.data)
+        }
+
+        const role = (
+          loggedInUser?.role ||
+          loggedInUser?.userType ||
+          ''
+        ).toLowerCase()
+
+        if (role === 'artist') {
+          navigate('/artist/dashboard')
+        } else {
+          navigate('/')
+        }
+      } else {
+        setError(response.data?.msg || response.data?.message || 'Login failed')
       }
-      else {
-        console.log(response.data.msg)
-      }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.error(err)
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.msg ||
+          'Failed to log in. Please check your credentials.'
+      )
     }
-
   }
 
   return (
@@ -48,6 +74,8 @@ export default function Login() {
           <h1>Log In</h1>
           <p>Welcome back! Please enter your details.</p>
         </div>
+
+        {error && <div className="alert-message">{error}</div>}
 
         <button
           type="button"
